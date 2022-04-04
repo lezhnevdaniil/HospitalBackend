@@ -7,7 +7,6 @@ const ApiError = require('../exceptions/api-error');
 class UserService {
   async registration(login, password) {
     const candidate = await userModel.findOne({ login });
-    console.log(candidate);
     if (candidate) {
       throw ApiError.BadRequest(
         `User with this login ${login} already exists`

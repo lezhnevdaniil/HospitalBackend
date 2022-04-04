@@ -1,11 +1,12 @@
 const Appoint = require('../../db/models/list/list');
+const jwt = require('jsonwebtoken');
 
 module.exports.createAppoint = (req, res) => {
   const body = req.body;
-  const { user_id, name, doctor, date, complaints } = body;
+  const { token, name, doctor, date, complaints } = body;
   res.set('Access-Control-Allow-Origin', '*');
   const appoint = new Appoint({
-    user_id: user_id,
+    user_id: jwt.decode(token, 'jwt-secret-key').id,
     name: name,
     doctor: doctor,
     date: date,
@@ -17,7 +18,8 @@ module.exports.createAppoint = (req, res) => {
 };
 
 module.exports.allAppoints = (req, res) => {
-  const user_id = req.query.user_id;
+  const token = req.query.token
+  const user_id = jwt.decode(token, 'jwt-secret-key').id;
   Appoint.find({ user_id: user_id })
     .then((result) => {
       res.send(result);
@@ -28,7 +30,8 @@ module.exports.allAppoints = (req, res) => {
 };
 
 module.exports.updateAppoint = (req, res) => {
-  const {user_id, name, doctor, date, complaints, _id} = req.body;
+  const {token, name, doctor, date, complaints, _id} = req.body;
+  const user_id = jwt.decode(token, 'jwt-secret-key').id;
   res.set('Access-Control-Allow-Origin', '*');
   Appoint.updateOne({_id},
     {
